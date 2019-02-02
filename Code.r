@@ -35,3 +35,16 @@ round(prop.table(table(iris$Species))*100, digits = 1)
 #Step 3 
 summary(iris[c("Petal.Width", "Sepal.Width")])
 
+#Step 4: Prepare Workspace
+#Step 5: Prepare Data
+
+normalize <- function(x) {
+  num <- x - min(x)
+  denom <- max(x) - min(x)
+  return(num/denom)
+}
+
+#normalization
+iris_norm <- as.data.frame(lapply(iris[1:4], normalize))
+
+summary(iris_norm)
