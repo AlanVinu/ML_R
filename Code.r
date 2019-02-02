@@ -1,5 +1,6 @@
 library(ggvis)
 library(class)
+library(gmodels)
 
 
 #Step 1 : Get Data
@@ -38,6 +39,7 @@ summary(iris[c("Petal.Width", "Sepal.Width")])
 #Step 4: Prepare Workspace
 #Step 5: Prepare Data
 
+
 normalize <- function(x) {
   num <- x - min(x)
   denom <- max(x) - min(x)
@@ -48,3 +50,41 @@ normalize <- function(x) {
 iris_norm <- as.data.frame(lapply(iris[1:4], normalize))
 
 summary(iris_norm)
+
+#training and test dataset
+
+set.seed(1234)
+
+ind <- sample(2, nrow(iris), replace = TRUE, prob = c(0.67,0.33))
+
+iris.training <- iris[ind == 1, 1:4]
+
+head(iris.training)
+
+iris.test <- iris[ind == 2, 1:4]
+
+head(iris.test)
+
+iris.trainLabels <- iris[ind == 1, 5]
+
+summary(iris.trainLabels)
+
+iris.testLabels <- iris[ind == 2, 5]
+
+summary(iris.testLabels)
+
+#kNN
+
+iris_pred <- knn(train = iris.training, test = iris.test, cl = iris.trainLabels, k = 3)
+
+summary(iris_pred)
+
+#Step 7: Evaluate
+
+irisTestLabels <- data.frame(iris.testLabels)
+
+merge <- data.frame(iris_pred, irisTestLabels)
+
+names(merge) <- c("Predicted Species", "Observed Species")
+
+CrossTable(x = iris.testLabels, y = iris_pred, prop.chisq = FALSE)
